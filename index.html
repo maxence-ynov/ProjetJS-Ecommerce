@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Atelier Orme | Nos produits</title>
+    <meta
+      name="description"
+      content="Decouvrez notre selection de produits."
+    />
+    <link rel="stylesheet" href="styles/style.css" />
+  </head>
+  <body data-page="home">
+    <div class="page-shell">
+      <header class="catalog-header">
+        <a class="catalog-header__brand" href="index.html">Atelier Orme</a>
+        <a href="cart.html" class="catalog-header__cart">
+          <span>Panier</span>
+          <span class="cart-chip__count" data-cart-count hidden>0</span>
+        </a>
+      </header>
+
+      <main class="page-main home-main">
+        <section class="home-intro">
+          <h1>Nos produits</h1>
+          <p>Retrouvez les produits disponibles.</p>
+        </section>
+
+        <section class="home-feedback" aria-live="polite">
+          <div class="page-status" data-loading-status>Chargement des produits...</div>
+          <div class="page-status page-status--error" data-error-status hidden></div>
+        </section>
+
+        <section class="catalogue-section" id="catalogue" aria-labelledby="catalogue-title">
+          <h2 class="sr-only" id="catalogue-title">Produits</h2>
+          <div class="product-grid" data-product-list></div>
+        </section>
+      </main>
+
+      <footer class="site-footer home-footer">
+        <p>Projet e-commerce scolaire</p>
+        <p>&copy; <span data-current-year></span> Atelier Orme</p>
+      </footer>
+    </div>
+
+    <script type="module" src="scripts/main.js"></script>
+  </body>
+</html>

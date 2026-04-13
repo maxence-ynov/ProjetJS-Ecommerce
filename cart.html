@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Atelier Orme | Votre panier</title>
+    <meta
+      name="description"
+      content="Retrouvez vos articles et confirmez votre commande."
+    />
+    <link rel="stylesheet" href="styles/style.css" />
+  </head>
+  <body data-page="cart">
+    <div class="page-shell">
+      <header class="catalog-header">
+        <a class="catalog-header__brand" href="index.html">Atelier Orme</a>
+        <a href="cart.html" class="catalog-header__cart">
+          <span>Panier</span>
+          <span class="cart-chip__count" data-cart-count hidden>0</span>
+        </a>
+      </header>
+
+      <main class="page-main cart-page-main">
+        <section class="cart-page-head">
+          <h1>Votre panier</h1>
+          <p>Verifiez votre panier puis renseignez vos informations.</p>
+        </section>
+
+        <div class="cart-layout">
+          <section class="cart-panel">
+            <div class="cart-panel__head">
+              <div>
+                <h2>Produits</h2>
+              </div>
+              <a class="text-link" href="index.html#catalogue">Continuer vos achats</a>
+            </div>
+
+            <div class="page-status" data-cart-status>Chargement du panier...</div>
+            <div class="cart-lines" data-cart-items></div>
+          </section>
+
+          <aside class="checkout-panel">
+            <div class="checkout-summary" data-cart-summary></div>
+
+            <form class="checkout-form" data-checkout-form novalidate>
+              <h2 class="checkout-form__title">Informations de commande</h2>
+
+              <div class="form-grid">
+                <label class="field">
+                  <span>Prenom</span>
+                  <input type="text" name="firstName" data-field autocomplete="given-name" />
+                  <small class="field__error" data-error-for="firstName"></small>
+                </label>
+
+                <label class="field">
+                  <span>Nom</span>
+                  <input type="text" name="lastName" data-field autocomplete="family-name" />
+                  <small class="field__error" data-error-for="lastName"></small>
+                </label>
+
+                <label class="field field--full">
+                  <span>Adresse</span>
+                  <input type="text" name="address" data-field autocomplete="street-address" />
+                  <small class="field__error" data-error-for="address"></small>
+                </label>
+
+                <label class="field">
+                  <span>Ville</span>
+                  <input type="text" name="city" data-field autocomplete="address-level2" />
+                  <small class="field__error" data-error-for="city"></small>
+                </label>
+
+                <label class="field">
+                  <span>Email</span>
+                  <input type="email" name="email" data-field autocomplete="email" />
+                  <small class="field__error" data-error-for="email"></small>
+                </label>
+              </div>
+
+              <p class="form-feedback" data-form-feedback></p>
+
+              <button class="button button--primary button--full" type="submit" data-submit-order>
+                Confirmer la commande
+              </button>
+            </form>
+          </aside>
+        </div>
+      </main>
+
+      <footer class="site-footer">
+        <p>Projet e-commerce scolaire</p>
+        <p>&copy; <span data-current-year></span> Atelier Orme</p>
+      </footer>
+    </div>
+
+    <script type="module" src="scripts/cartPage.js"></script>
+  </body>
+</html>
