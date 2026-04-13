@@ -1,28 +1,9 @@
 import { formatPrice, getFurnitureById } from "./api.js";
 import { addToCart, syncCartCount } from "./cart.js";
+import { escapeHtml, setCurrentYear } from "./ui.js";
 
 const productStageElement = document.querySelector("[data-product-stage]");
 const productStatusElement = document.querySelector("[data-product-status]");
-
-function escapeHtml(value) {
-  return String(value).replace(/[&<>"']/g, (character) => {
-    const entities = {
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#39;"
-    };
-
-    return entities[character];
-  });
-}
-
-function setCurrentYear() {
-  document.querySelectorAll("[data-current-year]").forEach((element) => {
-    element.textContent = String(new Date().getFullYear());
-  });
-}
 
 function setStatus(message, type = "") {
   if (!productStatusElement) {
@@ -35,7 +16,10 @@ function setStatus(message, type = "") {
 }
 
 function buildProductTemplate(product) {
-  const optionsMarkup = product.varnish
+  const finishes = Array.isArray(product.varnish) ? product.varnish : [];
+  const noFinishMessage =
+    finishes.length === 0 ? "Aucune finition disponible pour ce produit." : "";
+  const optionsMarkup = finishes
     .map(
       (finish, index) => `
         <label class="option-pill">
@@ -62,14 +46,18 @@ function buildProductTemplate(product) {
             <p class="product-form__label">Choisir une finition</p>
             <div class="option-grid">${optionsMarkup}</div>
             <input type="hidden" name="quantity" value="1" />
-            <p class="form-feedback" data-varnish-feedback></p>
+            <p
+              class="form-feedback${noFinishMessage ? " form-feedback--error" : ""}"
+              data-varnish-feedback
+              aria-live="polite"
+            >${noFinishMessage}</p>
           </div>
 
           <div class="product-form__actions">
-            <button class="button button--primary" type="submit">
+            <button class="button button--primary" type="submit" ${finishes.length === 0 ? "disabled" : ""}>
               Ajouter au panier
             </button>
-            <p class="form-feedback" data-product-feedback></p>
+            <p class="form-feedback" data-product-feedback aria-live="polite" role="status"></p>
           </div>
         </form>
       </div>
@@ -82,10 +70,32 @@ function bindProductInteractions(product) {
   const quantityInput = form?.elements.namedItem("quantity");
   const feedbackElement = form?.querySelector("[data-product-feedback]");
   const varnishFeedbackElement = form?.querySelector("[data-varnish-feedback]");
+  let feedbackTimeoutId = null;
 
   if (!form || !(quantityInput instanceof HTMLInputElement)) {
     return;
   }
+
+  const clearFeedback = () => {
+    if (feedbackTimeoutId) {
+      window.clearTimeout(feedbackTimeoutId);
+      feedbackTimeoutId = null;
+    }
+
+    if (feedbackElement) {
+      feedbackElement.textContent = "";
+      feedbackElement.className = "form-feedback";
+    }
+  };
+
+  form.addEventListener("change", () => {
+    if (varnishFeedbackElement) {
+      varnishFeedbackElement.textContent = "";
+      varnishFeedbackElement.className = "form-feedback";
+    }
+
+    clearFeedback();
+  });
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -110,13 +120,16 @@ function bindProductInteractions(product) {
     try {
       addToCart(product, selectedOption.value, quantity);
       syncCartCount();
+      clearFeedback();
 
       if (feedbackElement) {
-        feedbackElement.textContent =
-          quantity > 1 ? `${quantity} articles ajoutes au panier.` : "Produit ajoute au panier.";
+        feedbackElement.textContent = "Produit ajoute au panier.";
         feedbackElement.className = "form-feedback form-feedback--success";
+        feedbackTimeoutId = window.setTimeout(clearFeedback, 2500);
       }
     } catch (error) {
+      clearFeedback();
+
       if (feedbackElement) {
         feedbackElement.textContent = error.message;
         feedbackElement.className = "form-feedback form-feedback--error";

@@ -18,6 +18,7 @@ import {
   renderContactErrors,
   validateContact
 } from "./validation.js";
+import { escapeHtml, setCurrentYear } from "./ui.js";
 
 const cartItemsElement = document.querySelector("[data-cart-items]");
 const cartStatusElement = document.querySelector("[data-cart-status]");
@@ -25,26 +26,6 @@ const cartSummaryElement = document.querySelector("[data-cart-summary]");
 const checkoutForm = document.querySelector("[data-checkout-form]");
 const submitButton = document.querySelector("[data-submit-order]");
 const formFeedbackElement = document.querySelector("[data-form-feedback]");
-
-function escapeHtml(value) {
-  return String(value).replace(/[&<>"']/g, (character) => {
-    const entities = {
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#39;"
-    };
-
-    return entities[character];
-  });
-}
-
-function setCurrentYear() {
-  document.querySelectorAll("[data-current-year]").forEach((element) => {
-    element.textContent = String(new Date().getFullYear());
-  });
-}
 
 function setCartStatus(message, type = "") {
   if (!cartStatusElement) {
@@ -98,7 +79,7 @@ function renderCart(cart) {
 
   if (cart.length === 0) {
     cartItemsElement.innerHTML = "";
-    setCartStatus("Votre panier est vide.", "error");
+    setCartStatus("Votre panier est vide.");
 
     if (submitButton) {
       submitButton.disabled = true;
@@ -161,6 +142,7 @@ function refreshCart() {
   const cart = loadCart();
   renderCart(cart);
   syncCartCount();
+  setFormFeedback("");
 }
 
 function hydrateDraft() {
@@ -265,7 +247,7 @@ async function handleCheckout(event) {
   renderContactErrors(checkoutForm, validation.errors);
 
   if (!validation.isValid) {
-    setFormFeedback("Verifiez vos informations avant de confirmer.", "error");
+    setFormFeedback("Corrigez les champs indiques.", "error");
     return;
   }
 
@@ -278,10 +260,14 @@ async function handleCheckout(event) {
     submitButton.disabled = true;
   }
 
-  setFormFeedback("Envoi de la commande...", "success");
+  setFormFeedback("Envoi de la commande...");
 
   try {
     const response = await submitOrder(orderPayload);
+
+    if (!response || typeof response.orderId !== "string" || !response.orderId.trim()) {
+      throw new Error("La commande n'a pas pu etre enregistree.");
+    }
 
     saveLastOrder({
       orderId: response.orderId,

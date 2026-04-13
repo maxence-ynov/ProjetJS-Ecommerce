@@ -1,29 +1,10 @@
 import { formatPrice } from "./api.js";
 import { loadLastOrder, syncCartCount } from "./cart.js";
+import { escapeHtml, setCurrentYear } from "./ui.js";
 
 const confirmationStageElement = document.querySelector("[data-confirmation-stage]");
 
-function escapeHtml(value) {
-  return String(value).replace(/[&<>"']/g, (character) => {
-    const entities = {
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#39;"
-    };
-
-    return entities[character];
-  });
-}
-
-function setCurrentYear() {
-  document.querySelectorAll("[data-current-year]").forEach((element) => {
-    element.textContent = String(new Date().getFullYear());
-  });
-}
-
-function renderMissingState() {
+function renderMissingState(message = "Aucune commande n'a ete trouvee.") {
   if (!confirmationStageElement) {
     return;
   }
@@ -31,24 +12,18 @@ function renderMissingState() {
   confirmationStageElement.innerHTML = `
     <div class="confirmation-card confirmation-card--simple">
       <h2>Commande introuvable</h2>
-      <p>Aucune commande n'a ete trouvee.</p>
+      <p>${escapeHtml(message)}</p>
       <a class="button button--primary" href="index.html#catalogue">Retour au catalogue</a>
     </div>
   `;
 }
 
-function renderConfirmation(order, orderIdFromUrl) {
+function renderConfirmation(order) {
   if (!confirmationStageElement) {
     return;
   }
 
-  const identityMismatch =
-    orderIdFromUrl && orderIdFromUrl !== order.orderId
-      ? `<p class="page-status page-status--error">Cette commande ne correspond pas a la derniere enregistree.</p>`
-      : "";
-
   confirmationStageElement.innerHTML = `
-    ${identityMismatch}
     <article class="confirmation-card confirmation-card--simple">
       <h2>Merci, votre commande est enregistree.</h2>
       <p>Vous pouvez revenir au catalogue.</p>
@@ -81,7 +56,12 @@ function init() {
     return;
   }
 
-  renderConfirmation(lastOrder, orderIdFromUrl);
+  if (orderIdFromUrl && orderIdFromUrl !== lastOrder.orderId) {
+    renderMissingState("Cette commande ne correspond pas a la derniere commande enregistree.");
+    return;
+  }
+
+  renderConfirmation(lastOrder);
 }
 
 init();

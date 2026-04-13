@@ -1,29 +1,10 @@
 import { formatPrice, getFurnitureList } from "./api.js";
 import { syncCartCount } from "./cart.js";
+import { escapeHtml, setCurrentYear } from "./ui.js";
 
 const productListElement = document.querySelector("[data-product-list]");
 const loadingStatusElement = document.querySelector("[data-loading-status]");
 const errorStatusElement = document.querySelector("[data-error-status]");
-
-function escapeHtml(value) {
-  return String(value).replace(/[&<>"']/g, (character) => {
-    const entities = {
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#39;"
-    };
-
-    return entities[character];
-  });
-}
-
-function setCurrentYear() {
-  document.querySelectorAll("[data-current-year]").forEach((element) => {
-    element.textContent = String(new Date().getFullYear());
-  });
-}
 
 function renderProducts(products) {
   if (!productListElement) {

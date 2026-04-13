@@ -35,7 +35,7 @@
               <a class="text-link" href="index.html#catalogue">Continuer vos achats</a>
             </div>
 
-            <div class="page-status" data-cart-status>Chargement du panier...</div>
+            <div class="page-status" data-cart-status aria-live="polite">Chargement du panier...</div>
             <div class="cart-lines" data-cart-items></div>
           </section>
 
@@ -48,36 +48,36 @@
               <div class="form-grid">
                 <label class="field">
                   <span>Prenom</span>
-                  <input type="text" name="firstName" data-field autocomplete="given-name" />
+                  <input type="text" name="firstName" data-field autocomplete="given-name" required />
                   <small class="field__error" data-error-for="firstName"></small>
                 </label>
 
                 <label class="field">
                   <span>Nom</span>
-                  <input type="text" name="lastName" data-field autocomplete="family-name" />
+                  <input type="text" name="lastName" data-field autocomplete="family-name" required />
                   <small class="field__error" data-error-for="lastName"></small>
                 </label>
 
                 <label class="field field--full">
                   <span>Adresse</span>
-                  <input type="text" name="address" data-field autocomplete="street-address" />
+                  <input type="text" name="address" data-field autocomplete="street-address" required />
                   <small class="field__error" data-error-for="address"></small>
                 </label>
 
                 <label class="field">
                   <span>Ville</span>
-                  <input type="text" name="city" data-field autocomplete="address-level2" />
+                  <input type="text" name="city" data-field autocomplete="address-level2" required />
                   <small class="field__error" data-error-for="city"></small>
                 </label>
 
                 <label class="field">
                   <span>Email</span>
-                  <input type="email" name="email" data-field autocomplete="email" />
+                  <input type="email" name="email" data-field autocomplete="email" required />
                   <small class="field__error" data-error-for="email"></small>
                 </label>
               </div>
 
-              <p class="form-feedback" data-form-feedback></p>
+              <p class="form-feedback" data-form-feedback aria-live="polite" role="status"></p>
 
               <button class="button button--primary button--full" type="submit" data-submit-order>
                 Confirmer la commande
